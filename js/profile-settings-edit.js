@@ -62,7 +62,8 @@ function profilePasswordUpdate() {
         alert("Enter the currentPswd input.")
     }
     const body = {
-        "currentPassword": currentPassword, "newPassword": newPswd
+        "currentPassword": currentPassword,
+        "newPassword": newPswd
     }
     const jwt = localStorage.getItem("jwtToken");
     if (!jwt) {
@@ -73,24 +74,28 @@ function profilePasswordUpdate() {
 
     fetch("http://localhost:8080/api/v1/profile/update/password", {
         method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Accept-Language': lang, 'Authorization': 'Bearer ' + jwt
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwt,
+            'Accept-Language': lang
         }, body: JSON.stringify(body)
     }).then(response => {
         if (!response.ok) {
             return response.json()
         } else {
-            return Promise.reject(response.text());
+            return Promise.reject(response.text()).then(err => {
+                throw new Error(err.message || 'Failed to update password');
+            });
         }
     }).then(data => {
         alert(data.message);
+        document.getElementById("profile_settings_current_pswd").value = "";
+        document.getElementById("profile_settings_new_pswd").value = "";
     }).catch(error => {
-        error.then(errMessage => {
-            alert(errMessage);
+            alert(error);
             const currentPswd = localStorage.getItem("currentPassword");
             const userDetail = JSON.parse(currentPswd);
             userDetail.name = name
             localStorage.setItem("userDetail", JSON.stringify(userDetail));
-        })
     })
 }
 
@@ -150,7 +155,9 @@ function profileUserNameChangeConfirm() {
 
     fetch("http://localhost:8080/api/v1/profile/update/confirm", {
         method: 'POST', headers: {
-            'Content-Type': 'application/json', 'Accept-Language': lang, 'Authorization': 'Bearer ' + jwt
+            'Content-Type': 'application/json',
+            'Accept-Language': lang,
+            'Authorization': 'Bearer ' + jwt
         }, body: JSON.stringify(body)
     }).then(response => {
         if (response.ok) {
@@ -174,7 +181,6 @@ function profileUserNameChangeConfirm() {
             alert(errMessage);
         })
     })
-
 }
 
 //------------ Change username confirm modal start ------------
@@ -277,7 +283,9 @@ function updateProfileImage(photoId) {
 
     fetch("http://localhost:8080/api/v1/profile/photo", {
         method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Accept-Language': lang, 'Authorization': 'Bearer ' + jwt
+            'Content-Type': 'application/json',
+            'Accept-Language': lang,
+            'Authorization': 'Bearer ' + jwt
         }, body: JSON.stringify(body)
     }).then(response => {
         if (!response.ok) {
