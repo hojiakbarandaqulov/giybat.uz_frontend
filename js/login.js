@@ -13,7 +13,6 @@ function login() {
         hasError = true;
     }
 
-
     if (password === null || password === undefined || password.length === 0) {
         passwordInput.nextElementSibling.style.display = "block";
         document.getElementById("password").style.borderColor = "red"

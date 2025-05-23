@@ -71,34 +71,34 @@ function profilePasswordUpdate() {
         return;
     }
     const lang = document.getElementById("current-lang").textContent;
-
     fetch("http://localhost:8080/api/v1/profile/update/password", {
-        method: 'PUT', headers: {
+        method: 'PUT',
+        headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + jwt,
             'Accept-Language': lang
-        }, body: JSON.stringify(body)
+        },
+        body: JSON.stringify(body)
     }).then(response => {
-        if (!response.ok) {
+        if (response.ok) {
             return response.json()
         } else {
-            return Promise.reject(response.text()).then(err => {
-                throw new Error(err.message || 'Failed to update password');
-            });
+            return Promise.reject(response.text());
         }
     }).then(data => {
-        alert(data.message);
-        document.getElementById("profile_settings_current_pswd").value = "";
-        document.getElementById("profile_settings_new_pswd").value = "";
+        alert(data.message)
+        console.log(data)
     }).catch(error => {
-            alert(error);
-            const currentPswd = localStorage.getItem("currentPassword");
-            const userDetail = JSON.parse(currentPswd);
-            userDetail.name = name
-            localStorage.setItem("userDetail", JSON.stringify(userDetail));
+        error.then(errMessage => {
+            alert(errMessage);
+        })
     })
 }
 
+/*  const currentPswd = localStorage.getItem("currentPassword");
+           const userDetail = JSON.parse(currentPswd);
+           userDetail.name = name
+           localStorage.setItem("userDetail", JSON.stringify(userDetail));*/
 function profileUserNameChange() {
     const username = document.getElementById("profile_settings_username").value
     if (!username) {
@@ -284,8 +284,7 @@ function updateProfileImage(photoId) {
     fetch("http://localhost:8080/api/v1/profile/photo", {
         method: 'PUT', headers: {
             'Content-Type': 'application/json',
-            'Accept-Language': lang,
-            'Authorization': 'Bearer ' + jwt
+            'Accept-Language': lang, 'Authorization': 'Bearer ' + jwt
         }, body: JSON.stringify(body)
     }).then(response => {
         if (!response.ok) {
